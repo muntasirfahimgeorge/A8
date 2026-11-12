@@ -31,14 +31,12 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Google Login বা পেজ রিলোডের পর HTTPOnly JWT Cookie সিঙ্ক রাখা
   useEffect(() => {
     if (session?.user) {
       syncAuthCookie();
     }
   }, [session]);
 
-  // বাইরে ক্লিক করলে ড্রপডাউন বন্ধ করা
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -73,7 +71,6 @@ const Navbar = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-zinc-200/80 dark:border-zinc-800 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
-        {/* Left: StudioSpace Logo with Aperture Icon */}
         <Link href="/" className="flex items-center gap-2.5 group">
           <div className="p-2 rounded-xl bg-amber-500 text-zinc-950 shadow-sm group-hover:rotate-45 transition-transform duration-300">
             <Aperture className="w-6 h-6 stroke-[2.2]" />
@@ -83,7 +80,6 @@ const Navbar = () => {
           </span>
         </Link>
 
-        {/* Center: Desktop Navigation Links */}
         <nav className="hidden md:flex items-center gap-7">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
@@ -106,9 +102,7 @@ const Navbar = () => {
           })}
         </nav>
 
-        {/* Right: Theme Toggle + Auth Actions */}
         <div className="flex items-center gap-3">
-          {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
             aria-label="Toggle Theme"
@@ -121,7 +115,6 @@ const Navbar = () => {
             )}
           </button>
 
-          {/* Auth Section */}
           {!isPending && !session && (
             <div className="hidden sm:flex items-center gap-2.5">
               <Link
@@ -139,7 +132,6 @@ const Navbar = () => {
             </div>
           )}
 
-          {/* Authenticated Profile Dropdown */}
           {!isPending && session?.user && (
             <div className="relative" ref={dropdownRef}>
               <button
@@ -220,18 +212,20 @@ const Navbar = () => {
             </div>
           )}
 
-          {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen((prev) => !prev)}
             className="md:hidden p-2 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-200"
             aria-label="Toggle Menu"
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileMenuOpen ? (
+              <X className="w-5 h-5" />
+            ) : (
+              <Menu className="w-5 h-5" />
+            )}
           </button>
         </div>
       </div>
 
-      {/* Mobile Navigation Drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 py-4 space-y-2">
           {navLinks.map((link) => (
