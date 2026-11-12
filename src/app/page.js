@@ -149,14 +149,61 @@ const guarantees = [
   },
 ];
 
+const HeroSlideView = ({ slide }) => (
+  <div className="relative h-full w-full flex items-center">
+    <img
+      src={slide.image}
+      alt={slide.title}
+      className="absolute inset-0 h-full w-full object-cover"
+    />
+    <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/90 via-zinc-950/70 to-zinc-950/30" />
+
+    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+      <div className="max-w-2xl space-y-5">
+        <span className="inline-block px-3.5 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase bg-amber-500/20 text-amber-400 border border-amber-500/30">
+          {slide.badge}
+        </span>
+
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+          {slide.title}
+        </h1>
+
+        <p className="text-base sm:text-lg text-zinc-300 leading-relaxed">
+          {slide.subtext}
+        </p>
+
+        <div className="pt-2 flex flex-wrap items-center gap-4">
+          <Link
+            href="/studios"
+            className="px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold text-sm shadow-lg transition"
+          >
+            Explore Studios
+          </Link>
+          <Link
+            href="/studios"
+            className="px-6 py-3.5 rounded-xl border border-white/30 bg-white/10 hover:bg-white/20 text-white font-bold text-sm backdrop-blur-md transition"
+          >
+            Host Your Space
+          </Link>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 const HomePage = () => {
   const { data: session } = authClient.useSession();
+  const [mounted, setMounted] = useState(false);
   const [featuredStudios, setFeaturedStudios] = useState([]);
   const [wishlistIds, setWishlistIds] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const serverUrl =
     process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000";
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const loadFeatured = async () => {
@@ -215,58 +262,26 @@ const HomePage = () => {
     <div>
       {/* 1. Banner / Hero Slider */}
       <section className="relative">
-        <Swiper
-          modules={[Autoplay, Pagination, Navigation]}
-          autoplay={{ delay: 5000, disableOnInteraction: false }}
-          pagination={{ clickable: true }}
-          navigation
-          loop
-          className="h-[520px] sm:h-[600px] w-full"
-        >
-          {heroSlides.map((slide) => (
-            <SwiperSlide key={slide.id}>
-              <div className="relative h-full w-full flex items-center">
-                <img
-                  src={slide.image}
-                  alt={slide.title}
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/90 via-zinc-950/70 to-zinc-950/30" />
-
-                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-                  <div className="max-w-2xl space-y-5">
-                    <span className="inline-block px-3.5 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                      {slide.badge}
-                    </span>
-
-                    <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
-                      {slide.title}
-                    </h1>
-
-                    <p className="text-base sm:text-lg text-zinc-300 leading-relaxed">
-                      {slide.subtext}
-                    </p>
-
-                    <div className="pt-2 flex flex-wrap items-center gap-4">
-                      <Link
-                        href="/studios"
-                        className="px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold text-sm shadow-lg transition"
-                      >
-                        Explore Studios
-                      </Link>
-                      <Link
-                        href="/studios"
-                        className="px-6 py-3.5 rounded-xl border border-white/30 bg-white/10 hover:bg-white/20 text-white font-bold text-sm backdrop-blur-md transition"
-                      >
-                        Host Your Space
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+        {!mounted ? (
+          <div className="h-[520px] sm:h-[600px] w-full">
+            <HeroSlideView slide={heroSlides[0]} />
+          </div>
+        ) : (
+          <Swiper
+            modules={[Autoplay, Pagination, Navigation]}
+            autoplay={{ delay: 5000, disableOnInteraction: false }}
+            pagination={{ clickable: true }}
+            navigation
+            loop
+            className="h-[520px] sm:h-[600px] w-full"
+          >
+            {heroSlides.map((slide) => (
+              <SwiperSlide key={slide.id}>
+                <HeroSlideView slide={slide} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        )}
       </section>
 
       {/* 2. Featured Studios Section (Dynamic .limit(6)) */}

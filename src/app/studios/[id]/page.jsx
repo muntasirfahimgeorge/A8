@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "../../lib/auth-client";
@@ -21,7 +21,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
-const StudioDetailsPage = () => {
+const StudioDetailsContent = () => {
   const { id } = useParams();
   const router = useRouter();
   const { data: session } = authClient.useSession();
@@ -29,6 +29,7 @@ const StudioDetailsPage = () => {
   const [studio, setStudio] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeImageIdx, setActiveImageIdx] = useState(0);
+  const [todayStr, setTodayStr] = useState("");
 
   // Booking Modal States
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,6 +42,10 @@ const StudioDetailsPage = () => {
 
   const serverUrl =
     process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000";
+
+  useEffect(() => {
+    setTodayStr(new Date().toISOString().split("T")[0]);
+  }, []);
 
   useEffect(() => {
     const fetchStudio = async () => {
@@ -61,7 +66,6 @@ const StudioDetailsPage = () => {
     if (id) fetchStudio();
   }, [id, serverUrl]);
 
-  // ঘণ্টা ও মোট খরচ হিসাব করা
   const calculateHours = () => {
     if (!startTime || !endTime) return 0;
     const [sh, sm] = startTime.split(":").map(Number);
@@ -169,8 +173,6 @@ const StudioDetailsPage = () => {
       ? studio.gallery
       : [studio.image];
 
-  const todayStr = new Date().toISOString().split("T")[0];
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Back Link */}
@@ -261,9 +263,8 @@ const StudioDetailsPage = () => {
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        {/* Left 2 Columns: Overview, Amenities, Host, Reviews */}
+        {/* Left 2 Columns */}
         <div className="lg:col-span-2 space-y-10">
-          {/* Overview */}
           <section>
             <h2 className="text-xl font-bold text-zinc-900 dark:text-white mb-3">
               Workspace Overview
@@ -273,7 +274,6 @@ const StudioDetailsPage = () => {
             </p>
           </section>
 
-          {/* Specifications */}
           <section className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             <div className="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">
               <p className="text-xs text-zinc-500">Max Crew Capacity</p>
@@ -295,7 +295,6 @@ const StudioDetailsPage = () => {
             </div>
           </section>
 
-          {/* Amenities List */}
           <section>
             <h2 className="text-xl font-bold text-zinc-900 dark:text-white mb-4">
               Included Gear & Amenities
@@ -313,7 +312,6 @@ const StudioDetailsPage = () => {
             </div>
           </section>
 
-          {/* Host Details */}
           <section className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-full bg-amber-500 text-zinc-950 font-extrabold text-lg flex items-center justify-center">
@@ -336,7 +334,6 @@ const StudioDetailsPage = () => {
             </div>
           </section>
 
-          {/* Reviews */}
           <section>
             <h2 className="text-xl font-bold text-zinc-900 dark:text-white mb-4">
               Creator Reviews ({studio.reviews?.length || 0})
@@ -539,5 +536,17 @@ const StudioDetailsPage = () => {
     </div>
   );
 };
+
+const StudioDetailsPage = () => (
+  <Suspense
+    fallback={
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="h-[420px] rounded-3xl bg-zinc-200 dark:bg-zinc-800 animate-pulse" />
+      </div>
+    }
+  >
+    <StudioDetailsContent />
+  </Suspense>
+);
 
 export default StudioDetailsPage;
