@@ -1,12 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { Aperture, Send } from "lucide-react";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
+  const [year, setYear] = useState(2026);
+
+  useEffect(() => {
+    setYear(new Date().getFullYear());
+  }, []);
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -35,7 +40,7 @@ const Footer = () => {
               production-ready studios on demand.
             </p>
 
-            {/* Social Links (X, Instagram, YouTube, LinkedIn SVGs) */}
+            {/* Social Links (X, Instagram, YouTube, LinkedIn) */}
             <div className="flex items-center gap-3 pt-2">
               <a
                 href="https://x.com"
@@ -242,9 +247,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-12 pt-6 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
-          <p>
-            © {new Date().getFullYear()} StudioSpace Inc. All rights reserved.
-          </p>
+          <p>© {year} StudioSpace Inc. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <span>Terms of Service</span>
             <span>Privacy Policy</span>
