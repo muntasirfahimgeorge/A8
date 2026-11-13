@@ -10,6 +10,11 @@ export const auth = betterAuth({
   database: mongodbAdapter(db, {
     client,
   }),
+  baseURL: process.env.BETTER_AUTH_URL || "https://studiospace-beta.vercel.app",
+  trustedOrigins: [
+    "http://localhost:3000",
+    "https://studiospace-beta.vercel.app",
+  ],
   emailAndPassword: {
     enabled: true,
   },
